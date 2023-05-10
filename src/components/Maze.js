@@ -12,7 +12,7 @@ function Maze({ maze, playerPosition }) {
                     style={{
                         width: "30px",
                         height: "30px",
-                        backgroundColor: isPlayer ? "#0E294B" : mazeCell === 0 ? "#F2F2F2" : "#222",
+                        backgroundColor: isPlayer ? "#56CCF2" : mazeCell === 0 ? "#F2F2F2" : "#222",
                         border: "1px solid #56CCF2",
                         boxSizing: "border-box",
                     }}

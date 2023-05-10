@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Maze from "./Maze";
+import './styles/MazeGame.css'
 
 export default function MazeGame() {
     const maze = [
@@ -62,9 +63,9 @@ export default function MazeGame() {
     };
 
     return (
-        <div onKeyDown={handleKeyDown} tabIndex="0">
-            <h1>The Way</h1>
+        <div className="maze-game" onKeyDown={handleKeyDown} tabIndex="0">
             <div>
+                <p>Clique no labirinto e depois</p>
                 <p>Use as teclas de direção para mover o jogador</p>
                 <div style={{ display: "flex" }}>
                     <Maze maze={maze} playerPosition={playerPosition} />

@@ -1,0 +1,45 @@
+:root {
+    --azul-escuro: #0E294B;
+    --azul-claro: #56CCF2;
+    --cinza-claro: #F2F2F2;
+    --branco: #F3F3F3;
+    --preto: #222222;
+}
+
+body {
+    background-color: var(--cinza-claro);
+    color: var(--preto);
+    width: 100%;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--branco);
+}
+
+a {
+    color: var(--azul-claro);
+}
+
+button {
+    background-color: var(--azul-claro);
+    color: var(--branco);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"] {
+    border: none;
+    background-color: var(--branco);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}

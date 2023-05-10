@@ -1,0 +1,63 @@
+:root {
+    --azul-escuro: #0E294B;
+    --azul-claro: #56CCF2;
+    --cinza-claro: #F2F2F2;
+    --branco: #F3F3F3;
+    --preto: #222222;
+}
+
+.maze-game {
+    outline: none;
+    display: flex;
+    justify-content: center;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--cinza-claro);
+    color: var(--branco);
+}
+
+h1 {
+    text-align: center;
+    color: var(--branco);
+    margin: 20px 0;
+}
+
+.instructions {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.maze-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+}
+
+.maze {
+    border: 2px solid var(--azul-escuro);
+    background-color: var(--azul-claro);
+    outline: none;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    margin: 1px;
+    background-color: var(--branco);
+}
+
+.cell.wall {
+    background-color: var(--preto);
+}
+
+.cell.player {
+    background-color: red;
+}
