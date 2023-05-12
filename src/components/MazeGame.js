@@ -16,16 +16,6 @@ function gerarLabirinto() {
       labirinto.push(linha);
     }
   
-    // Preencher bordas com paredes
-    for (let i = 0; i < linhas; i++) {
-      labirinto[i][0] = 1;
-      labirinto[i][colunas - 1] = 1;
-    }
-    for (let j = 0; j < colunas; j++) {
-      labirinto[0][j] = 1;
-      labirinto[linhas - 1][j] = 1;
-    }
-  
     const direcoes = [
       { linha: -1, coluna: 0 },
       { linha: 0, coluna: 1 },
@@ -45,14 +35,14 @@ function gerarLabirinto() {
         const vizinhoColuna = atual.coluna + direcao.coluna * 2;
   
         if (
-          vizinhoLinha > 0 &&
+          vizinhoLinha >= 0 &&
           vizinhoLinha < linhas &&
-          vizinhoColuna > 0 &&
+          vizinhoColuna >= 0 &&
           vizinhoColuna < colunas &&
           labirinto[vizinhoLinha][vizinhoColuna] === 0
         ) {
           vizinhos.push({ linha: vizinhoLinha, coluna: vizinhoColuna });
-        }
+        }        
       }
   
       if (vizinhos.length === 0) {
