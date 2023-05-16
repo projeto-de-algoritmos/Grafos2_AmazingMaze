@@ -58,6 +58,10 @@ h1 {
     background-color: var(--preto);
 }
 
-.cell.player {
-    background-color: red;
-}
+.maze-completed {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+  }
+  

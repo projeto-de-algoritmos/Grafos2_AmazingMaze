@@ -1,11 +1,16 @@
-import React from "react";
-import './styles/Maze.css'
+import React, { useEffect } from "react";
+import './styles/Maze.css';
 
-function Maze({ maze, playerPosition }) {
+function Maze({ maze, playerPosition, handleMazeCompleted }) {
+    useEffect(() => {
+        const { row, column } = playerPosition;
+        if (maze[row][column] === 2) {
+        handleMazeCompleted();
+        }
+    }, [maze, playerPosition, handleMazeCompleted]);
     const mazeRows = maze.map((mazeRow, rowIndex) => {
         const mazeCells = mazeRow.map((mazeCell, columnIndex) => {
             const isPlayer = rowIndex === playerPosition.row && columnIndex === playerPosition.column;
-            const isStartCell = rowIndex === 0 && columnIndex === 1;
             const isEndCell = rowIndex === 9 && columnIndex === 41;
 
             return (
@@ -14,7 +19,7 @@ function Maze({ maze, playerPosition }) {
                     style={{
                         width: "30px",
                         height: "30px",
-                        backgroundColor: isPlayer ? "#56CCF2" : isStartCell || isEndCell ? "red" : mazeCell === 0 ? "#F2F2F2" : "#222",
+                        backgroundColor: isPlayer ? "#56CCF2" : isEndCell ? "red" : mazeCell === 0 ? "#F2F2F2" : "#222",
                         border: "1px solid #56CCF2",
                         boxSizing: "border-box",
                     }}
