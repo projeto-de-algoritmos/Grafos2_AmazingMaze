@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Maze from "./Maze";
 import './styles/MazeGame.css'
+import Cronometro from "./Cronometro";
 
 export default function MazeGame() {
 
@@ -26,7 +27,7 @@ export default function MazeGame() {
   });
 
   const [isMazeCompleted, setIsMazeCompleted] = useState(false);
-
+  const [destinoAlcancado, setDestinoAlcancado] = useState(false);
 
   const handleKeyDown = (event) => {
     const { key } = event;
@@ -81,10 +82,13 @@ export default function MazeGame() {
     }
   };
 
-  const { row, column } = playerPosition;
-  if (row === 9 && column === 41) {
-    alert("Parabéns! Você concluiu o labirinto!");
-  }
+  useEffect(() => {
+    const { row, column } = playerPosition;
+    if (row === 9 && column === 41) {
+      setDestinoAlcancado(true);
+      alert("Parabéns! Você concluiu o labirinto!");
+    }
+  }, [playerPosition]);
 
   useEffect(() => {
     const { row, column } = playerPosition;
@@ -112,6 +116,9 @@ export default function MazeGame() {
           </div>
         </div>
       )}
+      <div className={`cronometro ${destinoAlcancado ? 'cronometro-border-color' : '#56CCF2'}`}>
+        <Cronometro destino={{ alcancado: destinoAlcancado }} />
+      </div>
     </div>
   );
 }
