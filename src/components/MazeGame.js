@@ -25,6 +25,8 @@ export default function MazeGame() {
     row: 0,
     column: 1,
   });
+
+  const [destinoAlcancado, setDestinoAlcancado] = useState(false);
   const [isMazeCompleted, setIsMazeCompleted] = useState(false);
   const [distances, setDistances] = useState([]);
   const [shortestPath, setShortestPath] = useState([]);
@@ -274,6 +276,7 @@ export default function MazeGame() {
       } else {
         setIsMazeCompleted(true);
         setHasVisitedGoal(true);
+        setDestinoAlcancado(true);
       }
     }
   };
@@ -298,6 +301,7 @@ export default function MazeGame() {
           Parabéns! Você concluiu o labirinto. O caminho rosa é o caminho mais curto.<br/>
           Compare o seu caminho com o menor caminho para melhorar o seu tempo na próxima.
         </alert>
+        
       )}
       <div className={`cronometro ${destinoAlcancado ? 'cronometro-border-color' : '#56CCF2'}`}>
         <Cronometro destino={{ alcancado: destinoAlcancado }} />
