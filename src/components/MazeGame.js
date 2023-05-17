@@ -16,7 +16,7 @@ export default function MazeGame() {
     [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1],
     [1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
     [1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 2],
-    [1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    [1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
   ];
 
@@ -29,6 +29,9 @@ export default function MazeGame() {
   const [shortestPath, setShortestPath] = useState([]);
   const [foundShortestPath, setFoundShortestPath] = useState(false);
   const [pathSquares, setPathSquares] = useState([]);
+  const [visitedSquares, setVisitedSquares] = useState([]);
+  const [hasVisitedGoal, setHasVisitedGoal] = useState(false);
+  const [userPath, setUserPath] = useState([]);
 
   useEffect(() => {
     const shortestPath = dijkstra(maze, playerPosition);
@@ -36,8 +39,114 @@ export default function MazeGame() {
 
     const pathSquares = shortestPath.map((path) => `${path.row}-${path.column}`);
     setPathSquares(pathSquares);
+
+    const reachedGoal = playerPosition.row === 9 && playerPosition.column === 41;
+    if (reachedGoal) {
+      setFoundShortestPath(true);
+    }
   }, [maze, playerPosition]);
 
+  useEffect(() => {
+    const shortestPath = calculateShortestPath();
+    setShortestPath(shortestPath);
+
+    const pathSquares = shortestPath.map((path) => `${path.row}-${path.column}`);
+    setPathSquares(pathSquares);
+
+    const reachedGoal = playerPosition.row === 9 && playerPosition.column === 41;
+    if (reachedGoal) {
+      setFoundShortestPath(true);
+    }
+  }, [maze, playerPosition]);
+
+  useEffect(() => {
+    const reachedGoal = playerPosition.row === 9 && playerPosition.column === 41;
+    if (reachedGoal) {
+      if (hasVisitedGoal) {
+        setIsMazeCompleted(true);
+      } else {
+        setIsMazeCompleted(true);
+        setHasVisitedGoal(true);
+      }
+    }
+  }, [playerPosition, hasVisitedGoal]);
+  
+
+  const calculateShortestPath = () => {
+    const start = { row: 0, column: 1 };
+    const goal = { row: 9, column: 41 };
+  
+    const visited = new Set();
+    const distances = Array.from({ length: maze.length }, () =>
+      Array(maze[0].length).fill(Infinity)
+    );
+    const previous = Array.from({ length: maze.length }, () =>
+      Array(maze[0].length).fill(null)
+    );
+  
+    distances[start.row][start.column] = 0;
+  
+    while (true) {
+      let minDistance = Infinity;
+      let current = null;
+  
+      // Find the unvisited square with the minimum distance
+      for (let row = 0; row < maze.length; row++) {
+        for (let column = 0; column < maze[row].length; column++) {
+          if (!visited.has(`${row}-${column}`) && distances[row][column] < minDistance) {
+            minDistance = distances[row][column];
+            current = { row, column };
+          }
+        }
+      }
+  
+      if (current === null) {
+        break;
+      }
+  
+      visited.add(`${current.row}-${current.column}`);
+  
+      const neighbors = getNeighbors(current);
+      for (const neighbor of neighbors) {
+        const { row, column } = neighbor;
+  
+        if (
+          row >= 0 &&
+          row < maze.length &&
+          column >= 0 &&
+          column < maze[0].length &&
+          !visited.has(`${row}-${column}`) &&
+          maze[row][column] === 0
+        ) {
+          const distance = distances[current.row][current.column] + 1;
+          if (distance < distances[row][column]) {
+            distances[row][column] = distance;
+            previous[row][column] = current;
+          }
+        }
+      }
+    }
+  
+    const shortestPath = [];
+    let current = goal;
+  
+    while (current !== null) {
+      shortestPath.unshift(current);
+      current = previous[current.row][current.column];
+    }
+  
+    return shortestPath;
+  };
+  
+  const getNeighbors = ({ row, column }) => {
+    return [
+      { row: row - 1, column }, // Up
+      { row: row + 1, column }, // Down
+      { row, column: column - 1 }, // Left
+      { row, column: column + 1 }, // Right
+    ];
+  };
+  
 
   const dijkstra = (maze, start) => {
     const visited = new Set();
@@ -73,111 +182,121 @@ export default function MazeGame() {
             queue.push([nextRow, nextColumn, distance + 1]);
           }
         }
-      }      
+      }
     }
 
     return shortestPath;
   };
 
-
   const handleKeyDown = (event) => {
     const { key } = event;
-
+  
     switch (key) {
       case "ArrowUp":
-        if (
-          playerPosition.row > 0 &&
-          maze[playerPosition.row - 1][playerPosition.column] === 0
-        ) {
-          setPlayerPosition((prev) => ({
-            ...prev,
-            row: prev.row - 1,
-          }));
-        }
+        setPlayerPosition((prev) => {
+          const newRow = prev.row - 1;
+          if (
+            newRow >= 0 &&
+            maze[newRow][prev.column] === 0
+          ) {
+            const newPosition = {
+              ...prev,
+              row: newRow,
+            };
+            checkGoalReached(newPosition);
+            return newPosition;
+          }
+          return prev;
+        });
         break;
       case "ArrowDown":
-        if (
-          playerPosition.row < maze.length - 1 &&
-          maze[playerPosition.row + 1][playerPosition.column] === 0
-        ) {
-          setPlayerPosition((prev) => ({
-            ...prev,
-            row: prev.row + 1,
-          }));
-        }
+        setPlayerPosition((prev) => {
+          const newRow = prev.row + 1;
+          if (
+            newRow < maze.length &&
+            maze[newRow][prev.column] === 0
+          ) {
+            const newPosition = {
+              ...prev,
+              row: newRow,
+            };
+            checkGoalReached(newPosition);
+            return newPosition;
+          }
+          return prev;
+        });
         break;
       case "ArrowLeft":
-        if (
-          playerPosition.column > 0 &&
-          maze[playerPosition.row][playerPosition.column - 1] === 0
-        ) {
-          setPlayerPosition((prev) => ({
-            ...prev,
-            column: prev.column - 1,
-          }));
-        }
+        setPlayerPosition((prev) => {
+          const newColumn = prev.column - 1;
+          if (
+            newColumn >= 0 &&
+            maze[prev.row][newColumn] === 0
+          ) {
+            const newPosition = {
+              ...prev,
+              column: newColumn,
+            };
+            checkGoalReached(newPosition);
+            return newPosition;
+          }
+          return prev;
+        });
         break;
       case "ArrowRight":
-        if (
-          playerPosition.column < maze[0].length - 1 &&
-          maze[playerPosition.row][playerPosition.column + 1] === 0
-        ) {
-          setPlayerPosition((prev) => ({
-            ...prev,
-            column: prev.column + 1,
-          }));
-        }
+        setPlayerPosition((prev) => {
+          const newColumn = prev.column + 1;
+          if (
+            newColumn < maze[0].length &&
+            maze[prev.row][newColumn] === 0
+          ) {
+            const newPosition = {
+              ...prev,
+              column: newColumn,
+            };
+            checkGoalReached(newPosition);
+            return newPosition;
+          }
+          return prev;
+        });
         break;
       default:
         break;
     }
-
-    const currentDistance = distances.find(
-      (d) =>
-        d && d.row === playerPosition.row && d.column === playerPosition.column
-    );
+  };
   
-    const distanceToGoal = currentDistance ? currentDistance.distance : undefined;
-  
-    if (
-      distanceToGoal === shortestPath[shortestPath.length - 1]?.distance &&
-      playerPosition.row === 9 &&
-      playerPosition.column === 41
-    ) {
-      alert(
-        "Parabéns! Você encontrou o menor caminho possível e concluiu o labirinto!"
-      );
-    } else if (distanceToGoal === shortestPath[shortestPath.length - 1]?.distance) {
-      alert("Parabéns! Você encontrou o menor caminho possível!");
-    } else if (playerPosition.row === 9 && playerPosition.column === 41) {
-      alert("Parabéns! Você concluiu o labirinto!");
+  const checkGoalReached = (position) => {
+    const reachedGoal = position.row === 9 && position.column === 41;
+    if (reachedGoal) {
+      if (hasVisitedGoal) {
+        setIsMazeCompleted(true);
+      } else {
+        setIsMazeCompleted(true);
+        setHasVisitedGoal(true);
+      }
     }
-
   };
-
-  const handleMazeCompleted = () => {
-    setIsMazeCompleted(true);
-  };
-
+  
   return (
-    <div className="maze-game" onKeyDown={handleKeyDown} tabIndex="0">
-      {isMazeCompleted ? (
-        <span className="maze-completed">
-          {foundShortestPath
-            ? "Labirinto concluído e menor caminho encontrado!"
-            : "Labirinto concluído!"}
+    <div className="maze-game" onKeyDown={handleKeyDown} tabIndex={0}>
+      <div className="maze-container">
+        <Maze
+          maze={maze}
+          playerPosition={playerPosition}
+          isMazeCompleted={isMazeCompleted}
+          shortestPath={shortestPath}
+        />
+      </div>
+      {isMazeCompleted && !foundShortestPath && (
+        <span className="message">
+          Parabéns! Você concluiu o labirinto, mas não com o menor caminho!
         </span>
-      ) : (
-        <div>
-          <div style={{ display: "flex" }}>
-            <Maze
-              maze={maze}
-              playerPosition={playerPosition}
-              handleMazeCompleted={handleMazeCompleted}
-              pathSquares={pathSquares}
-            />
-          </div>
-        </div>
+      )}
+      {isMazeCompleted && foundShortestPath && (
+        <alert className="message">
+          Parabéns! Você concluiu o labirinto. O caminho rosa é o caminho mais curto.<br/>
+          Compare o seu caminho com o menor caminho para melhorar o seu tempo na próxima.
+        </alert>
       )}
     </div>
   );

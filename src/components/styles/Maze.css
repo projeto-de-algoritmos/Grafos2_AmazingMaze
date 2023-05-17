@@ -36,3 +36,9 @@
 .maze-cell--wall {
     background-color: var(--azul-escuro);
 }
+
+.maze-square.shortest-path {
+    background-color: pink;
+}
+  
+  
