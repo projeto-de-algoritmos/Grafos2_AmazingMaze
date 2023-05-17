@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Maze from "./Maze";
-import "./styles/MazeGame.css";
+import './styles/MazeGame.css'
+import Cronometro from "./Cronometro";
 
 export default function MazeGame() {
 
@@ -298,6 +299,9 @@ export default function MazeGame() {
           Compare o seu caminho com o menor caminho para melhorar o seu tempo na próxima.
         </alert>
       )}
+      <div className={`cronometro ${destinoAlcancado ? 'cronometro-border-color' : '#56CCF2'}`}>
+        <Cronometro destino={{ alcancado: destinoAlcancado }} />
+      </div>
     </div>
   );
 }

@@ -63,5 +63,17 @@ h1 {
     font-weight: bold;
     text-align: center;
     margin-top: 20px;
-  }
-  
+}
+
+.cronometro {
+    border: none;
+    height: 20px;
+    width: auto;
+    display: flex;
+    align-items: center;
+}
+
+.cronometro-border-color {
+    border: 2px solid var(--azul-claro);
+    color: var(--azul-claro);
+}
